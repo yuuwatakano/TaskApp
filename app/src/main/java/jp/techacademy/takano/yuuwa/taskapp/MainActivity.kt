@@ -98,21 +98,36 @@ class MainActivity : AppCompatActivity() {
         val ctserch = findViewById<EditText>(R.id.ctserch)
         val serch = findViewById<Button>(R.id.serch)
         serch.setOnClickListener {
-                 var ctresult = mRealm.where(Task::class.java)
-                     .equalTo("ctg",ctserch.text.toString().trim())
-                     .findAll()
-                 // Realmデータベースから、「すべてのデータを取得して新しい日時順に並べた結果」を取得
-                 val taskRealmResults = ctresult
+            var sw = ctserch.length()
+            if (sw > 0) {
+                var ctresult = mRealm.where(Task::class.java)
+                    .equalTo("ctg", ctserch.text.toString().trim())
+                    .findAll()
+                // Realmデータベースから、「すべてのデータを取得して新しい日時順に並べた結果」を取得
+                val taskRealmResults = ctresult
 
-                 // 上記の結果を、TaskListとしてセットする
-                 mTaskAdapter.mTaskList = mRealm.copyFromRealm(taskRealmResults)
+                // 上記の結果を、TaskListとしてセットする
+                mTaskAdapter.mTaskList = mRealm.copyFromRealm(taskRealmResults)
 
-                 // TaskのListView用のアダプタに渡す
-                 listView1.adapter = mTaskAdapter
+                // TaskのListView用のアダプタに渡す
+                listView1.adapter = mTaskAdapter
 
-                 // 表示を更新するために、アダプターにデータが変更されたことを知らせる
-                 mTaskAdapter.notifyDataSetChanged()
-             }
+                // 表示を更新するために、アダプターにデータが変更されたことを知らせる
+                mTaskAdapter.notifyDataSetChanged()
+            }else if (sw == 0) {
+                // Realmデータベースから、「すべてのデータを取得して新しい日時順に並べた結果」を取得
+                val taskRealmResults = mRealm.where(Task::class.java).findAll().sort("date", Sort.DESCENDING)
+
+                // 上記の結果を、TaskListとしてセットする
+                mTaskAdapter.mTaskList = mRealm.copyFromRealm(taskRealmResults)
+
+                // TaskのListView用のアダプタに渡す
+                listView1.adapter = mTaskAdapter
+
+                // 表示を更新するために、アダプターにデータが変更されたことを知らせる
+                mTaskAdapter.notifyDataSetChanged()
+            }
+        }
         reloadListView()
     }
 
